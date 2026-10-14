@@ -42,7 +42,7 @@ function renderSidebar() {
 }
 
 function renderWelcome() {
-  main.innerHTML = `<section class="welcome-hero"><div class="hero-copy"><span class="eyebrow light">YOUR LEARNING, YOUR PACE</span><h1>Big goals start<br>with <em>small steps.</em></h1><p>Turn the thing you want to learn into a clear path. Follow the next step, see your progress, and make room to grow.</p><button class="hero-button" type="button" data-open-new>Make your own path <span aria-hidden="true">↗</span></button></div><div class="hero-art" aria-hidden="true"><div class="art-orbit orbit-outer"></div><div class="art-orbit orbit-inner"></div><div class="art-center">✳</div><div class="art-tag tag-one">start here <span>↗</span></div><div class="art-tag tag-two">keep going ✦</div><div class="art-star star-one">✦</div><div class="art-star star-two">✳</div></div></section>
+  main.innerHTML = `<section class="welcome-hero"><div class="hero-copy"><span class="eyebrow light">A PLAN YOU CAN ADJUST</span><h1>Make a plan<br>you can <em>finish.</em></h1><p>Choose a six-week guide or define your own goal. Each week has small steps you can change as you learn.</p><button class="hero-button" type="button" data-open-new>Make your own path <span aria-hidden="true">↗</span></button></div><div class="hero-art" aria-hidden="true"><div class="trail-board"><div class="board-header"><span>YOUR NEXT SIX WEEKS</span><span>01 / 06</span></div><div class="board-track"><div class="board-step current"><span>01</span><div><strong>Begin</strong><small>Pick one clear goal</small></div><b>✓</b></div><div class="board-step"><span>02</span><div><strong>Practice</strong><small>Make time for it</small></div><b>↗</b></div><div class="board-step"><span>03</span><div><strong>Build</strong><small>Try something real</small></div><b>↗</b></div><div class="board-step"><span>04–06</span><div><strong>Keep going</strong><small>Reflect and improve</small></div><b>↗</b></div></div><div class="board-footer"><span>ONE STEP AT A TIME</span><span>✳</span></div></div></div></section>
     <section class="program-section"><div class="section-heading"><div><span class="eyebrow">A LITTLE HELP TO BEGIN</span><h2>Pick a starting point.</h2></div><p>Thoughtful six-week paths you can make your own.</p></div><div class="program-grid">${programs.map(program => `<article class="program-card ${program.tone}"><div class="program-top"><span class="program-icon" aria-hidden="true">${program.icon}</span><span class="program-tag">${program.tag}</span></div><div><span class="program-duration">${program.duration} · 18 steps</span><h3>${esc(program.title)}</h3><p>${esc(program.description)}</p></div><button type="button" data-program="${program.id}" class="program-link" aria-label="Start ${esc(program.title)}">Start this path <span aria-hidden="true">↗</span></button></article>`).join('')}</div></section>
     <section class="bottom-banner"><span class="banner-icon" aria-hidden="true">◎</span><div><strong>Made for the messy middle.</strong><p>Add your own tasks, check things off, and move at your own pace.</p></div></section>`;
 }
@@ -69,6 +69,7 @@ function render() {
 }
 
 function createTrack(options) {
+  if (tracks.length >= 100) { showToast('This browser can hold up to 100 paths. Export a backup before deleting one.'); return; }
   const track = makeTrack(options);
   tracks.unshift(track);
   selectedId = track.id;
@@ -142,9 +143,13 @@ document.querySelector('#import-file').addEventListener('change', async event =>
     const data = JSON.parse(await file.text());
     if (data?.app !== 'SkillTrail' || !Array.isArray(data.tracks) || data.tracks.length > 100 || !data.tracks.every(validTrack)) throw new Error('This is not a valid SkillTrail backup.');
     const ids = new Set(tracks.map(track => track.id));
-    let added = 0;
-    for (const track of data.tracks) if (!ids.has(track.id)) { tracks.push(track); ids.add(track.id); added++; }
-    save(); render(); showToast(added ? `Imported ${added} path${added === 1 ? '' : 's'}.` : 'These paths are already here.');
+    const additions = data.tracks.filter(track => {
+      if (ids.has(track.id)) return false;
+      ids.add(track.id); return true;
+    });
+    if (tracks.length + additions.length > 100) throw new Error('This browser can hold up to 100 paths.');
+    tracks.push(...additions);
+    save(); render(); showToast(additions.length ? `Imported ${additions.length} path${additions.length === 1 ? '' : 's'}.` : 'These paths are already here.');
   } catch (error) { showToast(error.message || 'Could not read this file.'); }
   event.target.value = '';
 });
