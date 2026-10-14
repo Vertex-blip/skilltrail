@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#191b31">
+  <meta name="description" content="Build a learning path you can actually finish. Plan, practice, and track each small step.">
+  <title>SkillTrail — Make progress visible</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="src/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Your learning paths">
+      <a class="brand" href="./" aria-label="SkillTrail home"><span class="brand-symbol" aria-hidden="true">✳</span><span>skill<span class="brand-light">trail</span></span></a>
+      <div class="sidebar-title"><span>YOUR PATHS</span><span id="path-count" class="count">0</span></div>
+      <nav id="path-list" class="path-list" aria-label="Learning paths"></nav>
+      <button id="new-path-side" class="sidebar-new" type="button"><span aria-hidden="true">＋</span> New path</button>
+      <div class="sidebar-bottom">
+        <div class="sidebar-note"><span class="note-spark" aria-hidden="true">✦</span><p>Small steps make big things feel possible.</p></div>
+        <p class="storage-note">Your paths stay in this browser. Export a backup anytime.</p>
+      </div>
+    </aside>
+    <div class="content-shell">
+      <header class="topbar">
+        <div class="topbar-left"><span class="tiny-dot"></span> A workspace for becoming</div>
+        <div class="topbar-actions">
+          <button class="text-button" id="import-button" type="button">Import</button>
+          <button class="text-button" id="export-button" type="button">Export</button>
+          <button class="topbar-new" id="new-path-top" type="button"><span aria-hidden="true">＋</span> New path</button>
+        </div>
+      </header>
+      <main id="main" tabindex="-1"></main>
+      <footer class="footer"><span>SkillTrail · Build with intention</span><span>Private by design · Stored on your device</span></footer>
+    </div>
+  </div>
+  <dialog id="new-dialog" class="modal">
+    <form id="new-form" method="dialog">
+      <div class="modal-head"><span class="eyebrow">START SOMETHING</span><button type="button" class="close-button" data-close aria-label="Close dialog">×</button></div>
+      <h2>Make your own path.</h2>
+      <p class="modal-intro">Give your goal a name. You can add and remove tasks as you go.</p>
+      <label for="path-title">What do you want to learn?</label>
+      <input id="path-title" name="title" type="text" maxlength="80" required placeholder="e.g. Learn photography">
+      <label for="path-outcome">What would success look like?</label>
+      <textarea id="path-outcome" name="outcome" maxlength="200" rows="2" placeholder="e.g. A portfolio of five photos I'm proud of"></textarea>
+      <label for="path-weeks">Length of your path</label>
+      <select id="path-weeks" name="weeks"><option value="4">4 weeks</option><option value="6" selected>6 weeks</option><option value="8">8 weeks</option><option value="12">12 weeks</option></select>
+      <div class="modal-actions"><button type="button" class="quiet-button" data-close>Cancel</button><button type="submit" class="primary-button">Create path <span aria-hidden="true">↗</span></button></div>
+    </form>
+  </dialog>
+  <input id="import-file" type="file" accept="application/json,.json" hidden>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
